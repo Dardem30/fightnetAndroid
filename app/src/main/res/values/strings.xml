@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">FightNet</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="Open">Open</string>
+    <string name="read_file">This app needs access to your file storage so that it can read files.</string>
+    <string name="Close">Close</string>
+    <string name="action_settings">Settings</string>
+</resources>

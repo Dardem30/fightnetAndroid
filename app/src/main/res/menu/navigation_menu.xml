@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/overview"
+        android:icon="@drawable/icons8prefabhouse100"
+        android:title="Overview"/>
+    <item android:id="@+id/message"
+        android:icon="@drawable/icons8editmessage48"
+        android:title="Messages"/>
+    <item android:id="@+id/search"
+        android:icon="@drawable/icons8searchbar50"
+        android:title="Search"/>
+    <item android:id="@+id/map"
+        android:icon="@drawable/icons8mapmarker50"
+        android:title="Map"/>
+
+</menu>

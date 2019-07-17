@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.roman.fightnet.requests.models.AppUser" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/titleDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="casual"
+                    android:text="Description"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5" />
+
+                <ImageView
+                    android:id="@+id/editDesription"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/edit" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/separeteLineOverview"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignBottom="@+id/titleDescription"
+                android:layout_marginBottom="-3dp"
+                android:background="@color/jumbo" />
+
+            <TextView
+                android:id="@+id/descriptionOverview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/separeteLineOverview"
+                android:fontFamily="casual"
+                android:text="@{user.description}" />
+
+            <LinearLayout
+                android:id="@+id/userPlaceOfResidencePanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/descriptionOverview"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".4"
+                    android:fontFamily="casual"
+                    android:text="Place of residence:" />
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:fontFamily="casual"
+                    android:text="@{user.country + ' ' + user.city}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/userWeightPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/userPlaceOfResidencePanel"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".4"
+                    android:fontFamily="casual"
+                    android:text="Weight:" />
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:fontFamily="casual"
+                    android:text="@{user.weight}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/userGrowthPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/userWeightPanel"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".4"
+                    android:fontFamily="casual"
+                    android:text="Growth:" />
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:fontFamily="casual"
+                    android:text="@{user.growth}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/userPreferableFightStylePanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/userGrowthPanel"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".4"
+                    android:fontFamily="casual"
+                    android:text="Preferable fight style:" />
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:fontFamily="casual"
+                    android:text="@{user.preferredKind}" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleStatistic"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_below="@+id/userPreferableFightStylePanel"
+                android:fontFamily="casual"
+                android:text="Statistics"
+                android:textColor="@color/primary_dark"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/separeteStatisticLineOverview"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/titleStatistic"
+                android:layout_marginBottom="-3dp"
+                android:background="@color/jumbo" />
+
+            <LinearLayout
+                android:id="@+id/userStatisticPanel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/separeteStatisticLineOverview"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <lecho.lib.hellocharts.view.PieChartView
+                    android:id="@+id/chartWins"
+                    android:layout_width="0dip"
+                    android:layout_height="215dp"
+                    android:layout_weight=".5" />
+
+                <lecho.lib.hellocharts.view.PieChartView
+                    android:id="@+id/chartLoses"
+                    android:layout_width="0dip"
+                    android:layout_height="215dp"
+                    android:layout_weight=".5" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/titleGallery"
+                android:layout_below="@+id/userStatisticPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_weight=".5"
+                    android:layout_height="35dp"
+                    android:fontFamily="casual"
+                    android:text="Gallery"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:layout_width="0dip"
+                    android:layout_weight=".2"
+                    android:id="@+id/btn_upload"
+                    android:background="@drawable/roundedbutton"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:text="Upload" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/separeteGalleryLineOverview"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/titleGallery"
+                android:layout_marginBottom="-3dp"
+                android:background="@color/jumbo" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/separeteGalleryLineOverview"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/backgallery"
+                android:orientation="vertical">
+
+
+                <Gallery
+                    android:id="@+id/gallery"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</layout>
