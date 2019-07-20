@@ -4,6 +4,7 @@ package com.roman.fightnet.requests;
 import com.roman.fightnet.requests.models.AppUser;
 import com.roman.fightnet.requests.models.City;
 import com.roman.fightnet.requests.models.Country;
+import com.roman.fightnet.requests.models.SearchResponse;
 import com.roman.fightnet.requests.models.searchCriteria.UserSearchCriteria;
 
 import java.util.List;
@@ -45,5 +46,5 @@ public interface ApiRequests {
     Call<Object> uploadPhoto(@Body MultipartBody build, @Header("Authorization") String token);
 
     @POST("util/listUsers")
-    List<AppUser> listUsers(@Body UserSearchCriteria searchCriteria);
+    Call<SearchResponse<AppUser>> listUsers(@Body UserSearchCriteria searchCriteria);
 }

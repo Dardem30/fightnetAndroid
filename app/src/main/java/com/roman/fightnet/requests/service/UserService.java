@@ -5,11 +5,11 @@ import com.google.gson.Gson;
 import com.roman.fightnet.requests.ApiRequests;
 import com.roman.fightnet.requests.RetrofitService;
 import com.roman.fightnet.requests.models.AppUser;
+import com.roman.fightnet.requests.models.SearchResponse;
 import com.roman.fightnet.requests.models.searchCriteria.UserSearchCriteria;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -51,7 +51,7 @@ public class UserService {
                 .addFormDataPart("email", email)
                 .build(), token);
     }
-    public List<AppUser> listUsers(final UserSearchCriteria searchCriteria) {
+    public Call<SearchResponse<AppUser>> listUsers(final UserSearchCriteria searchCriteria) {
         return requests.listUsers(searchCriteria);
     }
 }
