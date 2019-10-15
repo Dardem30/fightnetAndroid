@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface IConstants {
+    String apiEndpoint = "https://fightnet.herokuapp.com/";
     LocalStorage storage = new LocalStorage();
     List<String> fightStyles = Arrays.asList("Preferable fight style",
             "Aikido",
@@ -19,5 +20,5 @@ public interface IConstants {
             "Krav Maga",
             "Wing Chun");
     List<String> chartColours = Arrays.asList("#C01B1B", "#4480BD", "#57BD44", "#DED830", "#5104B2", "#566375", "#E64A19", "#212121", "#e62727");
-
+    String PREFERABLE_KIND = "Preferable fight style";
 }

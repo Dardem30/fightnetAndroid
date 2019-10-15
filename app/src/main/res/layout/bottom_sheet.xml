@@ -60,22 +60,31 @@
             android:layout_width="match_parent"
             android:layout_height="40dp">
 
-            <Spinner
+            <com.tiper.MaterialSpinner
                 android:id="@+id/searchCountries"
                 android:layout_width="0dp"
+                app:hintEnabled="true"
+                android:hint="Country"
+                app:spinnerMode="dialog"
                 android:layout_height="40dp"
                 android:layout_weight=".5" />
 
 
-            <Spinner
+            <com.tiper.MaterialSpinner
                 android:id="@+id/searchCitites"
+                app:hintEnabled="true"
+                android:hint="City"
+                app:spinnerMode="dialog"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight=".5" />
         </LinearLayout>
 
-        <Spinner
+        <com.tiper.MaterialSpinner
             android:id="@+id/searchPreferableFightStyle"
+            app:spinnerMode="dialog"
+            app:hintEnabled="true"
+            android:hint="Preferable fight style"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
         <RelativeLayout android:id="@+id/RelativeLayout01"

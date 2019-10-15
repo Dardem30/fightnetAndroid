@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -21,13 +20,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
@@ -44,6 +41,7 @@ import com.roman.fightnet.requests.service.UserService;
 import com.roman.fightnet.requests.service.util.UtilService;
 import com.roman.fightnet.ui.activities.profileActivities.ProfileActivity;
 import com.roman.fightnet.ui.util.GalleryImageAdapter;
+import com.tiper.MaterialSpinner;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +66,7 @@ import static com.roman.fightnet.IConstants.storage;
 public class OverviewFragment extends Fragment implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_FILE_CODE = 200;
     private static final int READ_REQUEST_CODE = 300;
+    private String email;
     private Context context;
     private final UserService userService = UtilService.getUserService();
     private final AuthService authService = UtilService.getAuthService();
@@ -87,16 +86,26 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            email = this.getArguments().getString("email");
+        } else {
+            email = IConstants.storage.getEmail();
+        }
         ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_overview, container, false);
         userService.getFacebookToken().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 storage.setFacebookToken(response.body());
-                userService.findUser(IConstants.storage.getEmail()).enqueue(new Callback<AppUser>() {
+                userService.findUser(email).enqueue(new Callback<AppUser>() {
                     @Override
                     public void onResponse(Call<AppUser> call, Response<AppUser> response) {
                         context = container.getContext();
                         final AppUser user = response.body();
+                        ((ProfileActivity) getActivity()).getToolbar().setTitle(user.getName() + " " + user.getSurname());
+                        storage.setMainPhoto(user.getMainPhoto());
+                        storage.setUserName(user.getName());
+                        storage.setUserSurName(user.getSurname());
                         binding.setVariable(BR.user, user);
                         Wins wins = user.getWins();
                         Loses loses = user.getLoses();
@@ -148,14 +157,21 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
                         selectedImage = container.findViewById(R.id.imageView);
                         gallery.setSpacing(2);
                         gallery.setPadding(5, 2, 5, 2);
-                        final GalleryImageAdapter galleryImageAdapter = new GalleryImageAdapter(container.getContext(), user.getPhotos());
-                        gallery.setAdapter(galleryImageAdapter);
+                        if (user.getPhotos() != null) {
+                            final GalleryImageAdapter galleryImageAdapter = new GalleryImageAdapter(container.getContext(), user.getPhotos());
+                            gallery.setAdapter(galleryImageAdapter);
 
-                        new GalleryImageAdapter.DownLoadImageTask(selectedImage).execute(user.getPhotos().get(0) + storage.getFacebookToken());
-                        gallery.setOnItemClickListener((parent, v, position, id) -> {
-                            new GalleryImageAdapter.DownLoadImageTask(selectedImage).execute(user.getPhotos().get(position) + storage.getFacebookToken());
-                        });
-                        setOnClickListeners(binding, container, user);
+                            new GalleryImageAdapter.DownLoadImageTask(selectedImage).execute(user.getPhotos().get(0) + storage.getFacebookToken());
+                            gallery.setOnItemClickListener((parent, v, position, id) -> {
+                                new GalleryImageAdapter.DownLoadImageTask(selectedImage).execute(user.getPhotos().get(position) + storage.getFacebookToken());
+                            });
+                        }
+                        if (bundle == null) {
+                            setOnClickListeners(binding, container, user);
+                        } else {
+                            container.findViewById(R.id.editDesription).setVisibility(View.GONE);
+                            container.findViewById(R.id.btn_upload).setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
@@ -179,9 +195,9 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
             final EditText descriptionField = popupInputDialogView.findViewById(R.id.editDescription);
             final EditText weightField = popupInputDialogView.findViewById(R.id.editWeight);
             final EditText growthField = popupInputDialogView.findViewById(R.id.editGrowth);
-            final Spinner countries = popupInputDialogView.findViewById(R.id.editCountry);
-            final Spinner cititesSpinner = popupInputDialogView.findViewById(R.id.editCity);
-            final Spinner preferableFightStyleSpinner = popupInputDialogView.findViewById(R.id.editPreferable);
+            final MaterialSpinner countries = popupInputDialogView.findViewById(R.id.editCountry);
+            final MaterialSpinner cititesSpinner = popupInputDialogView.findViewById(R.id.editCity);
+            final MaterialSpinner preferableFightStyleSpinner = popupInputDialogView.findViewById(R.id.editPreferable);
             initSpinners(countries, cititesSpinner, preferableFightStyleSpinner, container, user);
             descriptionField.setText(user.getDescription());
             weightField.setText(user.getWeight());
@@ -230,18 +246,19 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
         startActivityForResult(fileManagerIntent, REQUEST_FILE_CODE);
 
     }
-    private void initSpinners(final Spinner countries, final  Spinner cititesSpinner, final  Spinner preferableFightStyleSpinner, final  ViewGroup container, final  AppUser user) {
+    private void initSpinners(final MaterialSpinner countries, final  MaterialSpinner cititesSpinner, final  MaterialSpinner preferableFightStyleSpinner, final  ViewGroup container, final  AppUser user) {
         final ArrayAdapter<String> fightStylesAdapter = UtilService.setupStringAdapter(fightStyles, container.getContext());
         preferableFightStyleSpinner.setAdapter(fightStylesAdapter);
         preferableFightStyleSpinner.setSelection(fightStylesAdapter.getPosition(user.getPreferredKind()));
-        preferableFightStyleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        preferableFightStyleSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                preferredKind = fightStyles.get(position);
+            public void onNothingSelected(MaterialSpinner materialSpinner) {
+
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onItemSelected(MaterialSpinner materialSpinner, View view, int position, long l) {
+                preferredKind = fightStyles.get(position);
 
             }
         });
@@ -256,9 +273,14 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
                 }
                 final ArrayAdapter<String> countriesAdapter = UtilService.setupStringAdapter(countryNames, container.getContext());
                 countries.setAdapter(countriesAdapter);
-                countries.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                countries.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    public void onNothingSelected(MaterialSpinner materialSpinner) {
+
+                    }
+
+                    @Override
+                    public void onItemSelected(MaterialSpinner materialSpinner, View view, int position, long l) {
                         country = countryNames.get(position);
                         try {
                             authService.getCities(country).enqueue(new Callback<List<City>>() {
@@ -274,14 +296,15 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
                                         ArrayAdapter<String> adapterCities = UtilService.setupStringAdapter(cityNames, container.getContext());
                                         cititesSpinner.setAdapter(adapterCities);
                                         cititesSpinner.setSelection(adapterCities.getPosition(user.getCity()));
-                                        cititesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        cititesSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                                             @Override
-                                            public void onItemSelected(AdapterView<?> parent, View view, int positionCity, long id) {
-                                                city = cityNames.get(positionCity);
+                                            public void onNothingSelected(MaterialSpinner materialSpinner) {
+
                                             }
 
                                             @Override
-                                            public void onNothingSelected(AdapterView<?> adapterView) {
+                                            public void onItemSelected(MaterialSpinner materialSpinner, View view, int positionCity, long l) {
+                                                city = cityNames.get(positionCity);
 
                                             }
                                         });
@@ -296,11 +319,6 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
                         } catch (Exception e) {
                             Log.e("Overview fragment", "Error during trying to setup cities spinner", e);
                         }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
                     }
                 });
                 countries.setSelection(countriesAdapter.getPosition(user.getCountry()));
@@ -317,7 +335,7 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
         if (requestCode == REQUEST_FILE_CODE && resultCode == Activity.RESULT_OK) {
             fileUri = data.getData();
             file = new File(getRealPathFromURIPath(fileUri, context.getContentResolver()));
-            userService.uploadPhoto(file, storage.getEmail(), storage.getToken()).enqueue(new Callback<Object>() {
+            userService.uploadPhoto(file, email, storage.getToken()).enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(Call call, Response response) {
                     new AlertDialog.Builder(context)

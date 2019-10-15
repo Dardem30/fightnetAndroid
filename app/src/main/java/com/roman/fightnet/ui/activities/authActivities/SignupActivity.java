@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +17,7 @@ import com.roman.fightnet.requests.models.City;
 import com.roman.fightnet.requests.models.Country;
 import com.roman.fightnet.requests.service.AuthService;
 import com.roman.fightnet.requests.service.util.UtilService;
+import com.tiper.MaterialSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,17 +65,17 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
-        final Spinner preferableFightStyleSpinner = findViewById(R.id.preferableFightStyle);
+        final MaterialSpinner preferableFightStyleSpinner = findViewById(R.id.preferableFightStyle);
         preferableFightStyleSpinner.setAdapter(UtilService.setupStringAdapter(fightStyles, this));
-        preferableFightStyleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        preferableFightStyleSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                preferredKind = fightStyles.get(position);
+            public void onNothingSelected(MaterialSpinner materialSpinner) {
+
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onItemSelected(MaterialSpinner materialSpinner, View view, int position, long l) {
+                preferredKind = fightStyles.get(position);
             }
         });
         // TODO parallel stream
@@ -85,16 +84,16 @@ public class SignupActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<List<Country>> call, Response<List<Country>> response) {
                     countriesList = response.body();
-                    Spinner countries = findViewById(R.id.countries);
+                    MaterialSpinner countries = findViewById(R.id.countries);
                     final List<String> countryNames = new ArrayList<>(countriesList.size());
                     countryNames.add("Country");
                     for (final Country country: countriesList) {
                         countryNames.add(country.getName());
                     }
                     countries.setAdapter(UtilService.setupStringAdapter(countryNames, SignupActivity.this));
-                    countries.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    countries.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        public void onItemSelected(MaterialSpinner materialSpinner, View view, int position, long l) {
                             country = countryNames.get(position);
                             try {
                                 authService.getCities(country).enqueue(new Callback<List<City>>() {
@@ -102,21 +101,22 @@ public class SignupActivity extends AppCompatActivity {
                                     public void onResponse(Call<List<City>> call, Response<List<City>> responseCity) {
                                         cityList = responseCity.body();
                                         if (cityList != null) {
-                                            final Spinner cititesSpinner = findViewById(R.id.citites);
+                                            final MaterialSpinner cititesSpinner = findViewById(R.id.citites);
                                             final List<String> cityNames = new ArrayList<>(cityList.size());
                                             cityNames.add("City");
                                             for (final City city : cityList) {
                                                 cityNames.add(city.getName());
                                             }
                                             cititesSpinner.setAdapter(UtilService.setupStringAdapter(cityNames, SignupActivity.this));
-                                            cititesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                            cititesSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                                                 @Override
-                                                public void onItemSelected(AdapterView<?> parent, View view, int positionCity, long id) {
-                                                    city = cityNames.get(positionCity);
+                                                public void onNothingSelected(MaterialSpinner materialSpinner) {
+
                                                 }
 
                                                 @Override
-                                                public void onNothingSelected(AdapterView<?> adapterView) {
+                                                public void onItemSelected(MaterialSpinner materialSpinner, View view, int positionCity, long l) {
+                                                    city = cityNames.get(positionCity);
 
                                                 }
                                             });
@@ -134,7 +134,7 @@ public class SignupActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
+                        public void onNothingSelected(MaterialSpinner materialSpinner) {
 
                         }
                     });
@@ -150,21 +150,13 @@ public class SignupActivity extends AppCompatActivity {
             Log.e(TAG, "Error during trying to setup countries spinner", e);
         }
 
-        _signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signup();
-            }
-        });
+        _signupButton.setOnClickListener(v -> signup());
 
-        _loginLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
-            }
+        _loginLink.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         });
     }
 

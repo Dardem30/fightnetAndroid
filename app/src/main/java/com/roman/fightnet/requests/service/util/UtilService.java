@@ -1,17 +1,22 @@
 package com.roman.fightnet.requests.service.util;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.roman.fightnet.requests.service.AuthService;
+import com.roman.fightnet.requests.service.SocketService;
 import com.roman.fightnet.requests.service.UserService;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +24,8 @@ import java.util.Map;
 public class UtilService {
     private static final AuthService authService = new AuthService();
     private static final UserService userService = new UserService();
+    private static final SocketService socketService = new SocketService();
+    private static final Gson gson = new Gson();
 
     public static AuthService getAuthService() {
         return authService;
@@ -28,6 +35,11 @@ public class UtilService {
         return userService;
     }
 
+    public static SocketService getSocketService() {
+        return socketService;
+    }
+
+    @Deprecated
     public static String createJson(final Object parent, final  Object... fieldObjects) {
         final Map<String, String> names = new HashMap<>(fieldObjects.length);
         final StringBuilder builder = new StringBuilder();
@@ -85,4 +97,23 @@ public class UtilService {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
     }
+
+    public static Object castJsonToObject(final String json, final Class clazz) {
+        return gson.fromJson(json, clazz);
+    }
+
+    public static void setupDatepickersDate(final Context context, final EditText... fields) {
+        for (final EditText field: fields) {
+            field.setInputType(InputType.TYPE_NULL);
+            field.setOnClickListener(v -> {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                new DatePickerDialog(context,
+                        (view, year1, monthOfYear, dayOfMonth) -> field.setText(year1 + "-" + (monthOfYear + 1 > 9 ? monthOfYear + 1 : "0" + (monthOfYear + 1)) + "-" + (dayOfMonth > 9 ? dayOfMonth : "0" + dayOfMonth)), year, month, day).show();
+            });
+        }
+    }
+
 }

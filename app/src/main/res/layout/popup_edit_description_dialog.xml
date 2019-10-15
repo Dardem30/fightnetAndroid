@@ -1,6 +1,7 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="20dp">
 
     <TableRow
@@ -32,8 +33,11 @@
             android:gravity="end"
             android:text="Country : " />
 
-        <Spinner
+        <com.tiper.MaterialSpinner
             android:id="@+id/editCountry"
+            app:hintEnabled="true"
+            android:hint="Country"
+            app:spinnerMode="dialog"
             android:layout_width="200dp" />
     </TableRow>
 
@@ -47,8 +51,11 @@
             android:gravity="end"
             android:text="City : " />
 
-        <Spinner
+        <com.tiper.MaterialSpinner
             android:id="@+id/editCity"
+            app:hintEnabled="true"
+            android:hint="City"
+            app:spinnerMode="dialog"
             android:layout_width="200dp" />
     </TableRow>
 
@@ -96,8 +103,11 @@
             android:gravity="end"
             android:text="Fight style : " />
 
-        <Spinner
+        <com.tiper.MaterialSpinner
             android:id="@+id/editPreferable"
+            app:hintEnabled="true"
+            android:hint="Preferable fight style"
+            app:spinnerMode="dialog"
             android:layout_width="200dp" />
     </TableRow>
 

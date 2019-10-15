@@ -1,15 +1,24 @@
 package com.roman.fightnet.requests.service;
 
 
-import com.google.gson.Gson;
+import android.util.Log;
+
 import com.roman.fightnet.requests.ApiRequests;
 import com.roman.fightnet.requests.RetrofitService;
 import com.roman.fightnet.requests.models.AppUser;
+import com.roman.fightnet.requests.models.Conversation;
+import com.roman.fightnet.requests.models.Invite;
+import com.roman.fightnet.requests.models.Marker;
+import com.roman.fightnet.requests.models.Message;
 import com.roman.fightnet.requests.models.SearchResponse;
+import com.roman.fightnet.requests.models.forms.RequestForm;
+import com.roman.fightnet.requests.models.searchCriteria.InvitesSearchCriteria;
+import com.roman.fightnet.requests.models.searchCriteria.MapSearchCriteria;
 import com.roman.fightnet.requests.models.searchCriteria.UserSearchCriteria;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -20,10 +29,11 @@ import retrofit2.Response;
 
 public class UserService {
     private final ApiRequests requests = RetrofitService.createService(ApiRequests.class);
-    private final Gson gson = new Gson();
 
     public Call<AppUser> findUser(final String email) {
-        return requests.findUserByEmail(gson.fromJson("{'email': " + email + "}", Object.class));
+        final RequestForm form = new RequestForm();
+        form.setEmail(email);
+        return requests.findUserByEmail(form);
     }
 
     public Call<String> getFacebookToken() {
@@ -53,5 +63,70 @@ public class UserService {
     }
     public Call<SearchResponse<AppUser>> listUsers(final UserSearchCriteria searchCriteria) {
         return requests.listUsers(searchCriteria);
+    }
+
+    public Call<List<Conversation>> getConversations(final String email, String token) {
+        final RequestForm form = new RequestForm();
+        form.setEmail(email);
+        return requests.getConversations(form, token);
+    }
+    public Call<List<Message>> getDialog(final String userEmail, final String email, String token) {
+        final RequestForm form = new RequestForm();
+        form.setEmail1(userEmail);
+        form.setEmail2(email);
+        return requests.getDialog(form, token);
+    }
+    public Call<List<Marker>> getMarkers(final MapSearchCriteria searchCriteria) {
+        return requests.getMarkers(searchCriteria);
+    }
+
+    public void invite(final Invite invite, final String token) {
+        requests.invite(invite, token).enqueue(new Callback<Invite>() {
+            @Override
+            public void onResponse(Call<Invite> call, Response<Invite> response) {
+                Log.i("Invite", "User successfully invited");
+            }
+
+            @Override
+            public void onFailure(Call<Invite> call, Throwable t) {
+                Log.e("Invite", "Error during trying to create invite", t);
+            }
+        });
+    }
+
+    public Call<SearchResponse<Invite>> getInvites(final InvitesSearchCriteria invitesSearchCriteria) {
+        return requests.getInvites(invitesSearchCriteria);
+    }
+
+    public void acceptInvite(final Invite invite) {
+        requests.acceptInvite(invite).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.i("Invite", "User successfully accepted invite");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Invite", "Error during trying to accept invite", t);
+            }
+        });
+    }
+
+    public void declineInvite(final String id) {
+        requests.declineInvite(id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.i("Invite", "User successfully declined invite");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Invite", "Error during trying to decline invite", t);
+            }
+        });
+    }
+
+    public Call<SearchResponse<Invite>> getPlannedFights(InvitesSearchCriteria invitesSearchCriteria) {
+        return requests.getPlannedFights(invitesSearchCriteria);
     }
 }

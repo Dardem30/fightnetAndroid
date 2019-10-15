@@ -11,4 +11,7 @@ public class LocalStorage {
     private String token;
     private String email;
     private String facebookToken;
+    private String mainPhoto;
+    private String userName;
+    private String userSurName;
 }

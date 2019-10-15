@@ -1,11 +1,14 @@
 package com.roman.fightnet.requests.models;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class AppUser {
+@NoArgsConstructor
+public class AppUser implements Serializable {
     private String username;
     private String email;
     private String weight;
@@ -23,4 +26,9 @@ public class AppUser {
     private Loses loses;
     private Wins wins;
 
+    public AppUser(String email, String name, String surname) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+    }
 }
