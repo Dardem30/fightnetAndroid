@@ -19,6 +19,7 @@ import com.roman.fightnet.requests.models.searchCriteria.UserSearchCriteria;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -59,6 +60,17 @@ public class UserService {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", photo.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), photo))
                 .addFormDataPart("email", email)
+                .build(), token);
+    }
+
+    public Call<Object> uploadVideo(final File video, final String fighterInviterEmail, final String fighterInvitedEmail, final UUID id, final String fightStyle, final String token) {
+        return requests.uploadVideo(new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", video.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), video))
+                .addFormDataPart("fighterEmail1", fighterInviterEmail)
+                .addFormDataPart("fighterEmail2", fighterInvitedEmail)
+                .addFormDataPart("inviteId", id.toString())
+                .addFormDataPart("style", fightStyle)
                 .build(), token);
     }
     public Call<SearchResponse<AppUser>> listUsers(final UserSearchCriteria searchCriteria) {

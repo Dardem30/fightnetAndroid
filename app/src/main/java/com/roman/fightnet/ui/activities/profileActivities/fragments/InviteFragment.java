@@ -143,7 +143,9 @@ public class InviteFragment extends Fragment {
             isLoading = true;
             invite.setAccepted(true);
             userService.acceptInvite(invite);
-            index--;
+            if (index >= maxIndex) {
+                index--;
+            }
             if (index < 0) {
                 if (page != 1) {
                     page--;
@@ -182,7 +184,9 @@ public class InviteFragment extends Fragment {
         view.findViewById(R.id.decline_invite).setOnClickListener(v -> {
             isLoading = true;
             userService.declineInvite(invite.getId().toString());
-            index--;
+            if (index >= maxIndex) {
+                index--;
+            }
             if (index < 0) {
                 if (page != 1) {
                     page--;

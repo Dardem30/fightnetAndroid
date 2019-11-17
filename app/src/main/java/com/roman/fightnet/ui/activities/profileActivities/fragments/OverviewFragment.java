@@ -21,11 +21,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
 import com.roman.fightnet.BR;
@@ -77,10 +75,6 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
     private String country;
     private String city;
     private String preferredKind;
-    private Button fileBrowseBtn;
-    private Button uploadBtn;
-    private ImageView previewImage;
-    private TextView fileName;
     private Uri fileUri;
     private File file;
 
@@ -242,7 +236,7 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
     private void showFileChooserIntent() {
         Intent fileManagerIntent = new Intent(Intent.ACTION_GET_CONTENT);
         //Choose any file
-        fileManagerIntent.setType("*/*");
+        fileManagerIntent.setType("image/*");
         startActivityForResult(fileManagerIntent, REQUEST_FILE_CODE);
 
     }
@@ -334,7 +328,7 @@ public class OverviewFragment extends Fragment implements EasyPermissions.Permis
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_FILE_CODE && resultCode == Activity.RESULT_OK) {
             fileUri = data.getData();
-            file = new File(getRealPathFromURIPath(fileUri, context.getContentResolver()));
+            file = new File(UtilService.getPath(context, fileUri));
             userService.uploadPhoto(file, email, storage.getToken()).enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(Call call, Response response) {

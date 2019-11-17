@@ -81,4 +81,7 @@ public interface ApiRequests {
 
     @POST("util/getPlannedFights")
     Call<SearchResponse<Invite>> getPlannedFights(@Body InvitesSearchCriteria invitesSearchCriteria);
+
+    @POST("user/uploadVideo")
+    Call<Object> uploadVideo(@Body MultipartBody build,@Header("Authorization") String token);
 }
